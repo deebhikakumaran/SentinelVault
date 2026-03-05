@@ -1,0 +1,24 @@
+{
+  "sepolia": {
+    "label": "⟠ Sepolia",
+    "chainId": 11155111,
+    "rpc": "https://ethereum-sepolia-rpc.publicnode.com",
+    "vault": "0x59d1102E37ECC1ff5cEde1D67D9C0C59f05f0A19",
+    "mockDex": "0xb8EfB0040C6Cb17116bBc0cB630FDcAf54A87625",
+    "aavePool": "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
+    "weth": "0xC558DBdd856501FCd9aaF1E62eae57A9F0629a3c",
+    "usdc": "0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8",
+    "faucet": "0xC959483DBa39aa9E78757139af0e9a2EDEb3f42D"
+  },
+  "base": {
+    "label": "🔵 Base Sepolia",
+    "chainId": 84532,
+    "rpc": "https://sepolia.base.org",
+    "vault": "0x1980F9a92e97C63468f1cDA533900d0D50a33058",
+    "mockDex": "0xe27F698012E5eBcdc4E8f9d4AcAcdC6f8153C699",
+    "aavePool": "0x07eA79F68B2B3df564D0A34F8e19D9B1e339814b",
+    "weth": "0x4200000000000000000000000000000000000006",
+    "usdc": "0x036CbD53842c5426634e7929541eC2318f3dCF7e",
+    "faucet": null
+  }
+}

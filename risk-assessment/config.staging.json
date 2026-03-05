@@ -1,0 +1,34 @@
+{
+  "schedule": "0 */5 * * * *",
+  "marketDataUrl": "https://min-api.cryptocompare.com/data/pricemultifull?fsyms=BTC,ETH,BNB,SOL,AAVE,LINK,UNI,AVAX,MATIC,ARB&tsyms=USD",
+  "owner": "0x5042E61146F26a253697Ebf1C44F64E75EfccC9B",
+  "riskThreshold": 50,
+  "chains": [
+    {
+      "chainSelectorName": "ethereum-testnet-sepolia",
+      "isTestnet": true,
+      "chainLabel": "sepolia",
+      "aavePoolAddress": "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
+      "vaultAddress": "0x59d1102E37ECC1ff5cEde1D67D9C0C59f05f0A19",
+      "mockDexAddress": "0xb8EfB0040C6Cb17116bBc0cB630FDcAf54A87625",
+      "monitoredWallet": "0x59d1102E37ECC1ff5cEde1D67D9C0C59f05f0A19",
+      "gasLimit": "500000"
+    },
+    {
+      "chainSelectorName": "ethereum-testnet-sepolia-base-1",
+      "isTestnet": true,
+      "chainLabel": "base-sepolia",
+      "aavePoolAddress": "0x07eA79F68B2B3df564D0A34F8e19D9B1e339814b",
+      "vaultAddress": "0x1980F9a92e97C63468f1cDA533900d0D50a33058",
+      "mockDexAddress": "0xe27F698012E5eBcdc4E8f9d4AcAcdC6f8153C699",
+      "monitoredWallet": "0x1980F9a92e97C63468f1cDA533900d0D50a33058",
+      "gasLimit": "500000"
+    }
+  ],
+  "registry": {
+    "chainSelectorName": "ethereum-testnet-sepolia",
+    "address": "0xed1bC5A7c14fFD74C8b71F0d6a4C13430F34F2de",
+    "isTestnet": true,
+    "gasLimit": "500000"
+  }
+}

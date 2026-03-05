@@ -1,0 +1,19 @@
+# ── Foundry build artifacts ──────────────────────────────────────────────────
+cache/
+out/
+
+# ── Keep broadcast logs (testnet deploys) but exclude local/dry-run ──────────
+!/broadcast
+/broadcast/*/31337/
+/broadcast/**/dry-run/
+
+# ── Docs ─────────────────────────────────────────────────────────────────────
+docs/
+
+# ── Secrets ──────────────────────────────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Submodule contents (restored via `forge install` after clone) ─────────────
+lib/

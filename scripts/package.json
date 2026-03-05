@@ -1,0 +1,21 @@
+{
+  "name": "sentinel-vault-scripts",
+  "version": "1.0.0",
+  "description": "SentinelVault demo scripts — setup Aave positions and test CRE actions",
+  "scripts": {
+    "setup": "ts-node setup-positions.ts",
+    "verify": "ts-node verify-positions.ts",
+    "trigger-risk": "ts-node trigger-risk.ts",
+    "test-action": "ts-node test-action.ts",
+    "set-forwarder": "ts-node set-forwarder.ts"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.17.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.6.3"
+  }
+}
