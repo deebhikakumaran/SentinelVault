@@ -300,6 +300,18 @@ npx ts-node trigger-risk.ts sepolia
 
 ---
 
+## 📚 Documentation
+
+Dive deeper into the technical details of SentinelVault:
+
+*   **[System Architecture](./docs/ARCHITECTURE.md)** — Detailed overview of the multi-chain setup and atomic execution.
+*   **[Risk Engine](./docs/RISK_ENGINE.md)** — Deep dive into the deterministic risk scoring algorithm and action thresholds.
+*   **[Security & Privacy](./docs/SECURITY_&_PRIVACY.md)** — Explanation of TEE implementation, API key confidentiality, and MEV protection.
+*   **[Deployment Guide](./docs/DEPLOYMENT_GUIDE.md)** — Step-by-step instructions for deploying contracts and the CRE workflow.
+*   **[Contributing](./docs/CONTRIBUTING.md)** — Guidelines for local development, testing, and submitting pull requests.
+
+---
+
 <div align="center">
   Built with ❤️ by <b>Deebhika</b>
 </div>
