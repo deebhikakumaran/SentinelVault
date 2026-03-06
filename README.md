@@ -1,6 +1,55 @@
-# SentinelVault
+<div align="center">
+  <h1 align="center">🛡️ SentinelVault</h1>
+  <p align="center">
+    <b>Autonomous cross-chain DeFi position protection powered by Chainlink CRE</b>
+  </p>
 
-**Autonomous cross-chain DeFi position protection powered by Chainlink CRE**
+  <p align="center">
+    <img src="https://img.shields.io/badge/Solidity-%23363636.svg?style=for-the-badge&logo=solidity&logoColor=white" alt="Solidity" />
+    <img src="https://img.shields.io/badge/TypeScript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Next.js-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
+    <img src="https://img.shields.io/badge/Chainlink-375BD2?style=for-the-badge&logo=Chainlink&logoColor=white" alt="Chainlink" />
+  </p>
+
+  <p align="center">
+    <img src="https://img.shields.io/badge/Foundry-orange?style=flat-square&logo=foundry" alt="Foundry" />
+    <img src="https://img.shields.io/badge/Bun-black?style=flat-square&logo=bun&logoColor=white" alt="Bun" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white" alt="Tailwind" />
+    <img src="https://img.shields.io/badge/OpenZeppelin-4E5EE4?style=flat-square&logo=OpenZeppelin&logoColor=white" alt="OpenZeppelin" />
+    <img src="https://img.shields.io/badge/Ethers.js-24335C?style=flat-square" alt="Ethers" />
+    <img src="https://img.shields.io/badge/Viem-black?style=flat-square" alt="Viem" />
+  </p>
+</div>
+
+---
+
+### 💻 Tech Stack & Dependencies
+
+| Category | Tools & Libraries |
+| :--- | :--- |
+| **Smart Contracts** | Solidity (0.8.24), Foundry, OpenZeppelin, Aave V3 Protocols |
+| **Automation (CRE)** | @chainlink/cre-sdk, Bun, Zod, Viem |
+| **Frontend** | Next.js 14 (App Router), React 18, Tailwind CSS, Lucide Icons |
+| **Scripts & Testing** | Ethers.js v6, ts-node, Dotenv, Forge-Std |
+| **Security** | TEE (Trusted Execution Environments), ConfidentialHTTPClient |
+
+---
+
+### 🌟 Vision
+To create a **set-and-forget safety net** for DeFi users. We believe that managing cross-chain wealth shouldn't require being glued to a screen 24/7. SentinelVault ensures your assets are protected from market crashes and liquidations automatically, providing peace of mind through decentralized, deterministic automation.
+
+### 🛑 What Problem It Solves
+*   **Liquidation Risk:** Markets move fast. If ETH drops 20% while you're asleep, your Aave loan could be liquidated, costing you a 5-10% penalty plus lost collateral.
+*   **Manual Monitoring Fatigue:** Checking Health Factors across multiple chains (Sepolia, Base, etc.) is exhausting and error-prone.
+*   **Execution Complexity:** Manually withdrawing, swapping tokens, and repaying debt to "save" a position involves multiple transactions and high gas costs if not optimized.
+
+### 🛠️ How This Actually Works and Helps
+1.  **Always Watching:** SentinelVault runs a "security guard" script (Chainlink CRE) every 5 minutes.
+2.  **Smart Assessment:** It checks your loans on different blockchains and calculates a "Risk Score" based on real-time market data (fetched securely).
+3.  **Automatic Rescue:** If things get risky (Score > 50), it doesn't just alert you—it **acts**. It automatically withdraws a portion of your collateral, swaps it for stablecoins, and repays your debt in **one single transaction**.
+4.  **Stay Safe:** This raises your "Health Factor" back to a safe level, preventing liquidation and saving your money before the crash hits.
+
+---
 
 SentinelVault monitors Aave V3 positions across multiple chains, scores risk deterministically, and writes protective actions to on-chain vault contracts that execute atomically — all orchestrated by a Chainlink CRE (Capability Runtime Environment) workflow.
 
@@ -10,42 +59,26 @@ Submitted to the **Chainlink CRE Hackathon — Convergence 2026** across the **D
 
 ## Architecture
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     CRE WORKFLOW (DON)                          │
-│                                                                 │
-│  Cron (5 min)                                                   │
-│       │                                                         │
-│       ▼                                                         │
-│  Multi-Chain Aave Read ──────────────────────────────────────┐  │
-│  getUserAccountData()                                        │  │
-│  • Sepolia                                                   │  │
-│  • Base Sepolia                                              │  │
-│       │                                                      │  │
-│       ▼                                                      │  │
-│  ConfidentialHTTPClient (DON TEE Enclave) ◄── 🔒 API KEY     │  │
-│  CryptoCompare market data                                   │  │
-│  ConsensusAggregationByFields (median)                       │  │
-│       │                                                      │  │
-│       ▼                                                      │  │
-│  Risk Scoring (0–100)                                        │  │
-│  • Health Factor:    0–45 pts                                │  │
-│  • LTV utilisation:  0–25 pts                                │  │
-│  • Chain concentration: 0–10 pts                             │  │
-│  • Market sentiment: 0–20 pts                                │  │
-│       │                                                      │  │
-│       ├──(always)──► SentinelRegistry.onReport()             │  │
-│       │               Immutable audit log (Sepolia)           │  │
-│       │                                                      │  │
-│       └──(score ≥ 50)► SentinelVault.onReport() ◄────────────┘  │
-│                         KeystoneForwarder                        │
-└─────────────────────────────────────────────────────────────────┘
-         │
-         ▼ (atomic, single tx)
-  Aave.withdraw(WETH) → MockDEX.swap(WETH→USDC) → Aave.repay(USDC)
-         │
-         ▼
-  Health Factor recovers to safe range
+```mermaid
+graph TD
+    Cron[Cron Trigger: Every 5 Mins] --> MultiChainRead[Multi-Chain Aave Read]
+    MultiChainRead -->|Sepolia / Base Sepolia| RiskAssessor[Risk Scoring Engine]
+    
+    subgraph DON [Chainlink CRE DON TEE Enclave]
+        TEE[ConfidentialHTTPClient] -->|🔒 API Key| MarketData[CryptoCompare Data]
+        MarketData --> Consensus[Consensus Aggregation: Median]
+    end
+    
+    Consensus --> RiskAssessor
+    
+    RiskAssessor -->|Audit Log| Registry[SentinelRegistry.onReport]
+    RiskAssessor -->|If Score >= 50| Vault[SentinelVault.onReport]
+    
+    Vault -->|Atomic Transaction| Action[Aave.withdraw -> MockDEX.swap -> Aave.repay]
+    Action --> Result[Health Factor recovers to safe range]
+
+    style DON fill:#f5f7ff,stroke:#375bd2,stroke-width:2px
+    style Action fill:#e1f5fe,stroke:#01579b,stroke-dasharray: 5 5
 ```
 
 ---
