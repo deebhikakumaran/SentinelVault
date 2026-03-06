@@ -22,28 +22,20 @@
 </div>
 
 ---
-
-### 💻 Tech Stack & Dependencies
-
-| Category | Tools & Libraries |
-| :--- | :--- |
-| **Smart Contracts** | Solidity (0.8.24), Foundry, OpenZeppelin, Aave V3 Protocols |
-| **Automation (CRE)** | @chainlink/cre-sdk, Bun, Zod, Viem |
-| **Frontend** | Next.js 14 (App Router), React 18, Tailwind CSS, Lucide Icons |
-| **Scripts & Testing** | Ethers.js v6, ts-node, Dotenv, Forge-Std |
-| **Security** | TEE (Trusted Execution Environments), ConfidentialHTTPClient |
-
----
-
 ### 🌟 Vision
 To create a **set-and-forget safety net** for DeFi users. We believe that managing cross-chain wealth shouldn't require being glued to a screen 24/7. SentinelVault ensures your assets are protected from market crashes and liquidations automatically, providing peace of mind through decentralized, deterministic automation.
 
-### 🛑 What Problem It Solves
+**The Perspective:**
+*   **Without Sentinel:** You wake up to a 20% market crash, find your position liquidated, and lose your collateral to penalties.
+*   **With Sentinel:** While you sleep, the vault detects the crash, repays your debt, and saves your position before liquidation even starts.
+
+---
+### What Problem It Solves
 *   **Liquidation Risk:** Markets move fast. If ETH drops 20% while you're asleep, your Aave loan could be liquidated, costing you a 5-10% penalty plus lost collateral.
 *   **Manual Monitoring Fatigue:** Checking Health Factors across multiple chains (Sepolia, Base, etc.) is exhausting and error-prone.
 *   **Execution Complexity:** Manually withdrawing, swapping tokens, and repaying debt to "save" a position involves multiple transactions and high gas costs if not optimized.
 
-### 🛠️ How This Actually Works and Helps
+### How This Actually Works and Helps
 1.  **Always Watching:** SentinelVault runs a "security guard" script (Chainlink CRE) every 5 minutes.
 2.  **Smart Assessment:** It checks your loans on different blockchains and calculates a "Risk Score" based on real-time market data (fetched securely).
 3.  **Automatic Rescue:** If things get risky (Score > 50), it doesn't just alert you—it **acts**. It automatically withdraws a portion of your collateral, swaps it for stablecoins, and repays your debt in **one single transaction**.
@@ -56,29 +48,37 @@ SentinelVault monitors Aave V3 positions across multiple chains, scores risk det
 Submitted to the **Chainlink CRE Hackathon — Convergence 2026** across the **DeFi**, **Privacy**, and **Risk & Compliance** tracks.
 
 ---
+### Tech Stack & Dependencies
+
+| Category | Tools & Libraries |
+| :--- | :--- |
+| **Smart Contracts** | Solidity (0.8.24), Foundry, OpenZeppelin, Aave V3 Protocols |
+| **Automation (CRE)** | @chainlink/cre-sdk, Bun, Zod, Viem |
+| **Frontend** | Next.js 14 (App Router), React 18, Tailwind CSS, Lucide Icons |
+| **Scripts & Testing** | Ethers.js v6, ts-node, Dotenv, Forge-Std |
+| **Security** | TEE (Trusted Execution Environments), ConfidentialHTTPClient |
+
+---
 
 ## Architecture
 
 ```mermaid
 graph TD
-    Cron[Cron Trigger: Every 5 Mins] --> MultiChainRead[Multi-Chain Aave Read]
-    MultiChainRead -->|Sepolia / Base Sepolia| RiskAssessor[Risk Scoring Engine]
+    Cron[Cron] --> Read[Aave Read]
+    Read --> Risk[Risk Engine]
     
-    subgraph DON [Chainlink CRE DON TEE Enclave]
-        TEE[ConfidentialHTTPClient] -->|🔒 API Key| MarketData[CryptoCompare Data]
-        MarketData --> Consensus[Consensus Aggregation: Median]
+    subgraph DON [Chainlink TEE]
+        HTTP[Confidential HTTP] --> Data[Market Data]
+        Data --> Agg[Consensus]
     end
     
-    Consensus --> RiskAssessor
+    Agg --> Risk
     
-    RiskAssessor -->|Audit Log| Registry[SentinelRegistry.onReport]
-    RiskAssessor -->|If Score >= 50| Vault[SentinelVault.onReport]
+    Risk --> Registry[Registry]
+    Risk -->|Score >= 50| Vault[Vault]
     
-    Vault -->|Atomic Transaction| Action[Aave.withdraw -> MockDEX.swap -> Aave.repay]
-    Action --> Result[Health Factor recovers to safe range]
-
-    style DON fill:#f5f7ff,stroke:#375bd2,stroke-width:2px
-    style Action fill:#e1f5fe,stroke:#01579b,stroke-dasharray: 5 5
+    Vault --> Action[Withdraw/Swap/Repay]
+    Action --> Done[HF Restored]
 ```
 
 ---
@@ -297,3 +297,9 @@ npx ts-node trigger-risk.ts sepolia
 # 5. Verify on Sepolia Etherscan
 # https://sepolia.etherscan.io/address/0xed1bC5A7c14fFD74C8b71F0d6a4C13430F34F2de
 ```
+
+---
+
+<div align="center">
+  Built with ❤️ by <b>Deebhika</b>
+</div>
