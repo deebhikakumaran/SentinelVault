@@ -24,10 +24,11 @@ import {SentinelRegistry} from "../src/SentinelRegistry.sol";
 ///   2. (Later) Call registry.setForwarder(<KeystoneForwarder on Sepolia>) when known
 contract DeployRegistry is Script {
 
-    // ── CRE KeystoneForwarder on Sepolia ──────────────────────────────────────
-    // Set once Chainlink publishes the forwarder address for the hackathon DON.
-    // Until then, keep address(0) — only the deployer (owner) can call onReport().
-    address constant FORWARDER = address(0);
+    // ── CRE Simulation Forwarder on Sepolia (MockKeystoneForwarder) ───────────
+    // Used with `cre workflow simulate --broadcast`.
+    // Source: https://docs.chain.link/cre/guides/workflow/using-evm-client/forwarder-directory-ts
+    // Update to production KeystoneForwarder if workflow is ever live-deployed.
+    address constant FORWARDER = 0x15fC6ae953E024d975e77382eEeC56A9101f9F88;
 
     function run() external {
         uint256 deployerKey = vm.envUint("PRIVATE_KEY");
@@ -43,7 +44,7 @@ contract DeployRegistry is Script {
 
         console.log("SentinelRegistry   :", address(registry));
         console.log("  Owner            :", registry.owner());
-        console.log("  Forwarder        :", registry.KEYSTONE_FORWARDER());
+        console.log("  Forwarder        :", registry.forwarder());
 
         vm.stopBroadcast();
 
@@ -52,6 +53,6 @@ contract DeployRegistry is Script {
         console.log("1. Update config.staging.json:");
         console.log("   registry.address:", address(registry));
         console.log("");
-        console.log("2. (Later) Redeploy with FORWARDER set to the real KeystoneForwarder address");
+        console.log("2. (Later) Call registry.setForwarder(<productionForwarder>) if switching to live deployment");
     }
 }

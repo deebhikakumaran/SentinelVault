@@ -10,7 +10,10 @@ interface IReceiver {
 /// @dev Deployed on Sepolia. CRE workflow writes risk assessments here.
 contract SentinelRegistry is IReceiver {
 
-    address public immutable KEYSTONE_FORWARDER;
+    /// @notice CRE KeystoneForwarder authorised to call onReport().
+    ///         Set to simulation forwarder (MockKeystoneForwarder) for `cre workflow simulate --broadcast`.
+    ///         Update with setForwarder() when switching to production deployment.
+    address public forwarder;
     address public owner;
 
     struct RiskAssessment {
@@ -33,19 +36,22 @@ contract SentinelRegistry is IReceiver {
         uint256 timestamp
     );
 
+    event ForwarderUpdated(address indexed oldForwarder, address indexed newForwarder);
+
     constructor(address _forwarder) {
-        KEYSTONE_FORWARDER = _forwarder;
+        forwarder = _forwarder;
         owner = msg.sender;
     }
 
-    /// @notice CRE Consumer entry point — called by KeystoneForwarder
+    /// @notice CRE Consumer entry point — called by KeystoneForwarder (or owner for testing)
     /// @dev ABI encoding MUST match main.ts encodeAbiParameters exactly:
     ///      (uint8 riskScore, string action, uint256 healthFactor, uint256 totalDebtUsd, string worstChain)
     function onReport(bytes calldata /* metadata */, bytes calldata report) external override {
 
         require(
-            msg.sender == KEYSTONE_FORWARDER || msg.sender == owner,
-            "Unauthorized: Not the Forwarder or Owner"
+            msg.sender == owner ||
+            (forwarder != address(0) && msg.sender == forwarder),
+            "SentinelRegistry: caller not authorized"
         );
 
         (
@@ -66,6 +72,15 @@ contract SentinelRegistry is IReceiver {
         }));
 
         emit AssessmentLogged(riskScore, action, healthFactor, totalDebtUsd, worstChain, block.timestamp);
+    }
+
+    /// @notice Update the CRE KeystoneForwarder address.
+    ///         Call with simulation forwarder for `cre workflow simulate --broadcast`,
+    ///         or production forwarder after live workflow deployment.
+    function setForwarder(address _forwarder) external {
+        require(msg.sender == owner, "SentinelRegistry: not owner");
+        emit ForwarderUpdated(forwarder, _forwarder);
+        forwarder = _forwarder;
     }
 
     function supportsInterface(bytes4 interfaceId) external pure returns (bool) {

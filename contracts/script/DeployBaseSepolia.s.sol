@@ -23,7 +23,7 @@ import {SimpleMockDEX}   from "../src/SimpleMockDEX.sol";
 ///   2. Transfer USDC to MockDEX so it can fulfil swap requests
 ///   3. vault.supplyToAave(wethAmount)
 ///   4. vault.borrowFromAave(usdcAmount)
-///   5. vault.setForwarder(<KeystoneForwarder on Base Sepolia>) — when address is known
+///   5. vault.setForwarder(0x82300bd7c3958625581cc2f77bc6464dcecdf3e5) — simulation forwarder (set in constructor)
 ///   6. Update risk-assessment/config.staging.json: vaultAddress for Base Sepolia chain
 contract DeployBaseSepolia is Script {
 
@@ -36,8 +36,11 @@ contract DeployBaseSepolia is Script {
     // USDC: Aave testnet USDC on Base Sepolia
     address constant USDC = 0x036CbD53842c5426634e7929541eC2318f3dCF7e;
 
-    // ── CRE KeystoneForwarder on Base Sepolia ─────────────────────────────────
-    address constant FORWARDER   = address(0);
+    // ── CRE Simulation Forwarder on Base Sepolia (MockKeystoneForwarder) ──────
+    // Used with `cre workflow simulate --broadcast`.
+    // Source: https://docs.chain.link/cre/guides/workflow/using-evm-client/forwarder-directory-ts
+    // Update to production KeystoneForwarder if workflow is ever live-deployed.
+    address constant FORWARDER   = 0x82300bd7c3958625581cc2F77bC6464dcEcDF3e5;
 
     // ── Chainlink ETH/USD price feed on Base Sepolia ──────────────────────────
     address constant PRICE_FEED  = 0x4aDC67696bA383F43DD60A9e78F2C97Fbbfc7cb1;
@@ -90,8 +93,8 @@ contract DeployBaseSepolia is Script {
         console.log("   vault.supplyToAave(<wethAmount>)");
         console.log("   vault.borrowFromAave(<usdcAmount>)");
         console.log("");
-        console.log("4. (Later) Set CRE forwarder:");
-        console.log("   vault.setForwarder(<KeystoneForwarder on Base Sepolia>)");
+        console.log("4. Simulation forwarder is pre-set in constructor (MockKeystoneForwarder).");
+        console.log("   To update: vault.setForwarder(0x82300bd7c3958625581cc2f77bc6464dcecdf3e5)");
         console.log("");
         console.log("5. Update config.staging.json with vault address:", address(vault));
     }

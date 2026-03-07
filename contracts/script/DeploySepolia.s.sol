@@ -21,7 +21,7 @@ import {SimpleMockDEX}   from "../src/SimpleMockDEX.sol";
 ///   2. Transfer USDC to MockDEX so it can fulfil swap requests
 ///   3. vault.supplyToAave(wethAmount)
 ///   4. vault.borrowFromAave(usdcAmount)
-///   5. vault.setForwarder(<KeystoneForwarder on Sepolia>) — when address is known
+///   5. vault.setForwarder(0x15fc6ae953e024d975e77382eeec56a9101f9f88) — simulation forwarder (set in constructor)
 ///   6. Update risk-assessment/config.staging.json: vaultAddress
 contract DeploySepolia is Script {
 
@@ -32,10 +32,11 @@ contract DeploySepolia is Script {
     address constant WETH = 0xC558DBdd856501FCd9aaF1E62eae57A9F0629a3c;
     address constant USDC = 0x94a9D9AC8a22534E3FaCa9F4e7F2E2cf85d5E4C8;
 
-    // ── CRE KeystoneForwarder on Sepolia ──────────────────────────────────────
-    // Set once Chainlink publishes the forwarder address for the hackathon DON.
-    // Until then, keep address(0) — only the deployer (owner) can call onReport().
-    address constant FORWARDER   = address(0);
+    // ── CRE Simulation Forwarder on Sepolia (MockKeystoneForwarder) ───────────
+    // Used with `cre workflow simulate --broadcast`.
+    // Source: https://docs.chain.link/cre/guides/workflow/using-evm-client/forwarder-directory-ts
+    // Update to production KeystoneForwarder if workflow is ever live-deployed.
+    address constant FORWARDER   = 0x15fC6ae953E024d975e77382eEeC56A9101f9F88;
 
     // ── Chainlink ETH/USD price feed on Sepolia ───────────────────────────────
     address constant PRICE_FEED  = 0x694AA1769357215DE4FAC081bf1f309aDC325306;
@@ -90,8 +91,8 @@ contract DeploySepolia is Script {
         console.log("   vault.supplyToAave(<wethAmount>)");
         console.log("   vault.borrowFromAave(<usdcAmount>)");
         console.log("");
-        console.log("4. (Later) Set CRE forwarder once address is published:");
-        console.log("   vault.setForwarder(<KeystoneForwarder>)");
+        console.log("4. Simulation forwarder is pre-set in constructor (MockKeystoneForwarder).");
+        console.log("   To update: vault.setForwarder(0x15fc6ae953e024d975e77382eeec56a9101f9f88)");
         console.log("");
         console.log("5. Update config.staging.json:");
         console.log("   vaultAddress:", address(vault));
