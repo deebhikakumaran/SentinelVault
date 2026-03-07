@@ -1,18 +1,16 @@
 /**
  * set-forwarder.ts
  *
- * Sets the KeystoneForwarder address on both SentinelVault deployments
- * (Sepolia + Base Sepolia) after CRE workflow deployment.
+ * Sets the simulation MockKeystoneForwarder address on both SentinelVault deployments
+ * (Sepolia + Base Sepolia). Each chain uses its own forwarder address.
  *
- * The KeystoneForwarder address is obtained from the CRE gateway after deploying
- * the workflow. It authorizes the DON to call onReport() on the vault.
+ * Simulation forwarders (cre workflow simulate --broadcast):
+ *   Sepolia:      0x15fc6ae953e024d975e77382eeec56a9101f9f88
+ *   Base Sepolia: 0x82300bd7c3958625581cc2f77bc6464dcecdf3e5
  *
  * Usage:
  *   cd scripts
- *   npx ts-node set-forwarder.ts <forwarder-address>
- *
- * Example:
- *   npx ts-node set-forwarder.ts 0xAbCd...1234
+ *   npx ts-node set-forwarder.ts [--dry-run]
  *
  * Pass --dry-run to simulate without sending transactions.
  *
@@ -33,24 +31,21 @@ const VAULT_ABI = [
   'event ForwarderUpdated(address indexed oldForwarder, address indexed newForwarder)',
 ];
 
+// CRE simulation forwarders (MockKeystoneForwarder) per chain
+// Source: https://docs.chain.link/cre/guides/workflow/using-evm-client/forwarder-directory-ts
+const SIMULATION_FORWARDERS: Record<string, string> = {
+  sepolia: '0x15fc6ae953e024d975e77382eeec56a9101f9f88',
+  base:    '0x82300bd7c3958625581cc2f77bc6464dcecdf3e5',
+};
+
 async function main(): Promise<void> {
-  const forwarderArg = process.argv[2];
   const dryRun = process.argv.includes('--dry-run');
-
-  if (!forwarderArg || !ethers.isAddress(forwarderArg)) {
-    console.error('Usage: npx ts-node set-forwarder.ts <forwarder-address> [--dry-run]');
-    console.error('Example: npx ts-node set-forwarder.ts 0xAbCd...1234');
-    process.exit(1);
-  }
-
-  const newForwarder = ethers.getAddress(forwarderArg); // checksummed
 
   const privateKey = process.env.PRIVATE_KEY;
   if (!privateKey) throw new Error('PRIVATE_KEY not set in .env');
 
-  console.log('\nSentinelVault — Set KeystoneForwarder');
-  console.log(`New forwarder : ${newForwarder}`);
-  console.log(`Dry run       : ${dryRun}\n`);
+  console.log('\nSentinelVault — Set Simulation Forwarders (MockKeystoneForwarder)');
+  console.log(`Dry run : ${dryRun}\n`);
 
   const chains = [
     { key: 'sepolia', ...addresses.sepolia },
@@ -58,9 +53,11 @@ async function main(): Promise<void> {
   ];
 
   for (const chain of chains) {
+    const newForwarder = ethers.getAddress(SIMULATION_FORWARDERS[chain.key]);
     console.log(`── ${chain.label} ─────────────────────────────────────────────`);
-    console.log(`   vault    : ${chain.vault}`);
-    console.log(`   rpc      : ${chain.rpc}`);
+    console.log(`   vault       : ${chain.vault}`);
+    console.log(`   forwarder   : ${newForwarder}`);
+    console.log(`   rpc         : ${chain.rpc}`);
 
     const provider = new ethers.JsonRpcProvider(chain.rpc);
     const signer   = new ethers.Wallet(privateKey, provider);
@@ -121,8 +118,8 @@ async function main(): Promise<void> {
     console.log();
   }
 
-  console.log('Done. Both vaults are now authorized to accept CRE reports from the DON.');
-  console.log('Next step: wait for the first cron tick and check SentinelRegistry.');
+  console.log('Done. Both vaults are now authorized to accept CRE reports.');
+  console.log('Next step: run `cre workflow simulate risk-assessment --target staging-settings --broadcast`');
 }
 
 main().catch((err) => {
