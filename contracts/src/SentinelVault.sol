@@ -520,6 +520,13 @@ contract SentinelVault is IReceiver, ReentrancyGuard {
         AAVE_POOL.borrow(USDC, amount, VARIABLE_RATE, 0, address(this));
     }
 
+    /// @notice Withdraw WETH collateral from Aave back to this vault.
+    ///         Used by demo scripts to lower the health factor without relying on borrow limits.
+    ///         Pass type(uint256).max to withdraw all available collateral.
+    function withdrawCollateralFromAave(uint256 wethAmount) external onlyOwner {
+        AAVE_POOL.withdraw(WETH, wethAmount, address(this));
+    }
+
     // ══════════════════════════════════════════════════════════════════════════
     // ADMIN
     // ══════════════════════════════════════════════════════════════════════════
