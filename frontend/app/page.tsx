@@ -38,7 +38,7 @@ const FEATURES = [
   {
     green: false,
     title: 'Deterministic Risk Scoring',
-    desc: 'Combines health factor (45 pts), LTV utilization (25 pts), chain concentration (10 pts), and Fear & Greed (20 pts). Fully auditable, no black boxes.',
+    desc: 'Combines health factor (45 pts), LTV utilization (25 pts), chain concentration (10 pts), and Market Sentiment (20 pts). Fully auditable, no black boxes.',
   },
   {
     green: true,
@@ -65,11 +65,11 @@ const FEATURES = [
 const FAQS = [
   {
     q: 'What is SentinelVault?',
-    a: 'SentinelVault is an autonomous cross-chain DeFi position protection system. It monitors Aave V3 positions across multiple chains and automatically executes protective actions — from rebalancing to emergency exit — when risk exceeds configurable thresholds.',
+    a: 'SentinelVault is an autonomous multi-chain DeFi position protection system. It monitors Aave V3 positions across multiple chains and automatically executes protective actions — from rebalancing to emergency exit — when risk exceeds configurable thresholds.',
   },
   {
     q: 'How does risk scoring work?',
-    a: 'The score combines four signals: health factor (0–45 pts), LTV utilization (0–25 pts), multi-chain concentration (0–10 pts), and market sentiment via Fear & Greed index (0–20 pts). Scores are deterministic and fully auditable on-chain.',
+    a: 'The score combines four signals: health factor (0–45 pts), LTV utilization (0–25 pts), multi-chain concentration (0–10 pts), and market sentiment via CryptoCompare API (0–20 pts). Scores are deterministic and fully auditable on-chain.',
   },
   {
     q: 'What chains are supported?',

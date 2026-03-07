@@ -166,13 +166,15 @@ export default function AppPage() {
 
   return (
     <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+      <style suppressHydrationWarning>{`
 
         .ap {
           background: #000000;
           color: #ffffff;
-          font-family: 'Inter', sans-serif;
+          font-family: 'Rajdhani', sans-serif;
           min-height: 100vh;
           overflow-x: hidden;
         }
@@ -188,14 +190,20 @@ export default function AppPage() {
           position: sticky;
           top: 0;
           z-index: 100;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 18px 40px;
           background: rgba(0,0,0,0.75);
           backdrop-filter: blur(20px);
           -webkit-backdrop-filter: blur(20px);
           border-bottom: 1px solid rgba(255,255,255,0.06);
+          padding: 0 40px;
+        }
+
+        .ap-nav-inner {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 18px 0;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
         }
 
         .ap-logo {
@@ -256,6 +264,17 @@ export default function AppPage() {
           text-transform: uppercase;
           color: rgba(255,255,255,0.3);
           margin-bottom: 14px;
+        }
+
+        /* Section heading — Rajdhani 400, matches landing .lp-h2 */
+        .ap-section-h2 {
+          font-family: 'Rajdhani', sans-serif;
+          font-style: normal;
+          font-weight: 800;
+          font-size: clamp(30px, 2.5vw, 48px);
+          letter-spacing: -0.025em;
+          line-height: 1.13;
+          margin-bottom: 20px;
         }
 
         /* Card */
@@ -354,7 +373,7 @@ export default function AppPage() {
           flex: 1;
           padding: 10px 14px;
           border-radius: 10px;
-          font-family: 'Inter', sans-serif;
+          font-family: 'Rajdhani', sans-serif;
           font-size: 0.78rem;
           font-weight: 600;
           cursor: pointer;
@@ -377,7 +396,7 @@ export default function AppPage() {
         .ap-action-btn {
           padding: 9px 8px;
           border-radius: 9px;
-          font-family: 'Inter', sans-serif;
+          font-family: 'Rajdhani', sans-serif;
           font-size: 0.65rem;
           font-weight: 700;
           letter-spacing: 0.06em;
@@ -393,7 +412,7 @@ export default function AppPage() {
           width: 100%;
           padding: 14px 20px;
           border-radius: 12px;
-          font-family: 'Inter', sans-serif;
+          font-family: 'Rajdhani', sans-serif;
           font-size: 0.82rem;
           font-weight: 700;
           letter-spacing: 0.06em;
@@ -535,7 +554,7 @@ export default function AppPage() {
           background: none;
           border: none;
           color: rgba(255,255,255,0.3);
-          font-family: 'Inter', sans-serif;
+          font-family: 'Rajdhani', sans-serif;
           font-size: 0.72rem;
           font-weight: 500;
           cursor: pointer;
@@ -612,10 +631,12 @@ export default function AppPage() {
         {/* ── Nav ── */}
 
         <nav className="ap-nav">
-          <div className="ap-logo">Sentinel<em>Vault</em></div>
-          <div className="ap-badge">
-            <div className="ap-badge-dot" />
-            Live Testnet
+          <div className="ap-nav-inner">
+            <div className="ap-logo">Sentinel<em>Vault</em></div>
+            <div className="ap-badge">
+              <div className="ap-badge-dot" />
+              Live Testnet
+            </div>
           </div>
         </nav>
 
@@ -625,7 +646,7 @@ export default function AppPage() {
           {/* ── Live Positions ── */}
           <div style={{ marginBottom: 32 }}>
             <div className="ap-section-header">
-              <div className="ap-label">Live Positions</div>
+              <div className="ap-section-h2">Live Positions</div>
               <button
                 className="ap-refresh-btn"
                 onClick={() => { setPosLoading(true); fetchPositions().finally(() => setPosLoading(false)) }}
@@ -705,8 +726,12 @@ export default function AppPage() {
             )}
           </div>
 
+          <div className="ap-section-header" style={{ marginBottom: 16 }}>
+            <div className="ap-section-h2">Simulation</div>
+          </div>
+
           {/* ── Controls ── */}
-          <div className="ap-controls">
+          <div className="ap-controls">   
 
             {/* Step 1 — Trigger Risk */}
             <div className="ap-card">
@@ -830,7 +855,7 @@ export default function AppPage() {
                     return (
                       <button
                         key={a}
-                        onClick={() => setActAction(a)}
+                        onClick={() => { setActAction(a); setActResult(null) }}
                         className="ap-action-btn"
                         style={{
                           background:   sel ? actionBg(a) : 'transparent',
@@ -876,6 +901,15 @@ export default function AppPage() {
           </div>
 
           {/* ── Vault Execution History ── */}
+          <div className="ap-section-header" style={{ marginBottom: 16 }}>
+            <div className="ap-section-h2">Vault Execution History</div>
+            <button
+              className="ap-refresh-btn"
+              onClick={() => { setLogsLoading(true); fetchLogs().finally(() => setLogsLoading(false)) }}
+            >
+              ↺ Refresh
+            </button>
+          </div>
           <VaultActionLog
             data={vaultLogs as Parameters<typeof VaultActionLog>[0]['data']}
             loading={logsLoading}

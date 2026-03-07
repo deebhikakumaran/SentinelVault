@@ -1,10 +1,11 @@
 'use client'
 
-import {
-  formatUSD, formatHF, formatHFDisplay, actionColor, actionBg,
-  formatRelativeTime, formatTimestamp, hfColor,
-} from '@/lib/formatters'
-import { ethers } from 'ethers'
+import { formatHF, actionColor, formatRelativeTime, formatTimestamp, hfColor } from '@/lib/formatters'
+
+const fmt18 = (v: bigint, d = 4) => (Number(v) / 1e18).toFixed(d)
+const fmt6  = (v: bigint, d = 2) => (Number(v) / 1e6).toFixed(d)
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 type VaultLog = {
   id:                 number
@@ -30,99 +31,190 @@ type ChainLogs = {
 }
 
 interface VaultActionLogProps {
-  data:      ChainLogs[]
-  loading:   boolean
+  data:    ChainLogs[]
+  loading: boolean
 }
 
-function HFDelta({ before, after }: { before: string; after: string }) {
-  const hfB = formatHF(before)
-  const hfA = formatHF(after)
+// ── Style constants ───────────────────────────────────────────────────────────
+
+const FONT_BODY = "'Rajdhani', sans-serif"
+const FONT_MONO = "'JetBrains Mono', 'Fira Code', monospace"
+
+const label = (overrides?: React.CSSProperties): React.CSSProperties => ({
+  fontFamily:    FONT_BODY,
+  fontSize:      '0.62rem',
+  fontWeight:    600,
+  letterSpacing: '0.13em',
+  textTransform: 'uppercase',
+  color:         'rgba(255,255,255,0.28)',
+  marginBottom:  8,
+  ...overrides,
+})
+
+const monoVal = (overrides?: React.CSSProperties): React.CSSProperties => ({
+  fontFamily:         FONT_MONO,
+  fontVariantNumeric: 'tabular-nums',
+  fontSize:           '0.85rem',
+  fontWeight:         600,
+  ...overrides,
+})
+
+// ── Sub-components ────────────────────────────────────────────────────────────
+
+function Pill({
+  children,
+  color,
+  bg,
+  border,
+}: {
+  children: React.ReactNode
+  color: string
+  bg: string
+  border: string
+}) {
+  return (
+    <span style={{
+      display:       'inline-flex',
+      alignItems:    'center',
+      gap:           5,
+      padding:       '4px 11px',
+      borderRadius:  9999,
+      border:        `1px solid ${border}`,
+      background:    bg,
+      color,
+      fontFamily:    FONT_BODY,
+      fontSize:      '0.68rem',
+      fontWeight:    700,
+      letterSpacing: '0.07em',
+      textTransform: 'uppercase',
+      whiteSpace:    'nowrap',
+    }}>
+      {children}
+    </span>
+  )
+}
+
+function HFArrow({ before, after }: { before: string; after: string }) {
+  const hfB   = formatHF(before)
+  const hfA   = formatHF(after)
   const delta = isFinite(hfA) && isFinite(hfB) ? hfA - hfB : null
-  const color = delta !== null && delta > 0 ? '#00ff88' : '#ff6b35'
 
   return (
-    <div className="flex items-center gap-1 text-xs sv-num">
-      <span style={{ color: hfColor(hfB) }}>{isFinite(hfB) ? hfB.toFixed(3) : '∞'}</span>
-      <span style={{ color: 'var(--sv-dim)' }}>→</span>
-      <span style={{ color: hfColor(hfA) }}>{isFinite(hfA) ? hfA.toFixed(3) : '∞'}</span>
-      {delta !== null && (
-        <span style={{ color, fontSize: '0.65rem' }}>
-          ({delta >= 0 ? '+' : ''}{delta.toFixed(3)})
+    <div>
+      <div style={label()}>HF Change</div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+        <span style={monoVal({ color: hfColor(hfB) })}>
+          {isFinite(hfB) ? hfB.toFixed(3) : '∞'}
         </span>
+        <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '0.8rem' }}>→</span>
+        <span style={monoVal({ color: hfColor(hfA) })}>
+          {isFinite(hfA) ? hfA.toFixed(3) : '∞'}
+        </span>
+      </div>
+      {delta !== null && (
+        <div style={monoVal({
+          fontSize:   '0.72rem',
+          marginTop:  3,
+          color:      delta === 0 ? 'rgba(255,255,255,0.2)' : delta > 0 ? '#00FF85' : '#ff6b35',
+        })}>
+          {delta === 0 ? '—' : (delta > 0 ? '+' : '') + delta.toFixed(3)}
+        </div>
       )}
     </div>
   )
 }
 
-function LogRow({ log, isFirst }: { log: VaultLog; isFirst: boolean }) {
-  const color   = actionColor(log.action)
-  const wethOut = BigInt(log.withdrawnWeth)
-  const usdcIn  = BigInt(log.receivedUsdc)
-  const repaid  = BigInt(log.repaidUsdc)
+function Metric({ title, value, color }: { title: string; value: string; color: string }) {
+  return (
+    <div>
+      <div style={label()}>{title}</div>
+      <div style={monoVal({ color })}>{value}</div>
+    </div>
+  )
+}
+
+function LogRow({ log, isLatest }: { log: VaultLog; isLatest: boolean }) {
+  const actionCol = actionColor(log.action)
+  const wethOut   = BigInt(log.withdrawnWeth)
+  const usdcIn    = BigInt(log.receivedUsdc)
+  const repaid    = BigInt(log.repaidUsdc)
 
   return (
-    <div
-      className="rounded-lg p-4 flex flex-col gap-3"
-      style={{
-        background:  isFirst ? actionBg(log.action) : 'rgba(255,255,255,0.02)',
-        border:      `1px solid ${isFirst ? color + '44' : 'var(--sv-border)'}`,
-        animation:   isFirst ? 'fade-up 0.4s ease-out' : undefined,
-      }}
-    >
-      {/* Row top: action badge + risk score + time */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span
-            className="sv-badge"
-            style={{ color, borderColor: color, background: actionBg(log.action), fontSize: '0.6rem' }}
+    <div style={{
+      background:    isLatest ? `${actionCol}08` : 'rgba(255,255,255,0.02)',
+      border:        `1px solid ${isLatest ? actionCol + '35' : 'rgba(255,255,255,0.07)'}`,
+      borderRadius:  16,
+      padding:       '18px 20px',
+      display:       'flex',
+      flexDirection: 'column',
+      gap:           14,
+    }}>
+
+      {/* Top row: pills + timestamp */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
+          <Pill
+            color={actionCol}
+            bg={`${actionCol}12`}
+            border={actionCol}
           >
-            {log.action}
-          </span>
-          <span
-            className="sv-num text-xs px-2 py-0.5 rounded"
-            style={{ color: 'var(--sv-blue)', background: 'rgba(0,212,255,0.1)', fontSize: '0.65rem' }}
+            {log.action.replace(/_/g, ' ')}
+          </Pill>
+          <Pill
+            color="#00d4ff"
+            bg="rgba(0,212,255,0.06)"
+            border="rgba(0,212,255,0.2)"
           >
-            RISK {log.riskScore}
-          </span>
+            Risk {log.riskScore}
+          </Pill>
+          {log.action !== 'HOLD' && wethOut === 0n && (
+            <Pill
+              color="rgba(255,255,255,0.35)"
+              bg="rgba(255,255,255,0.04)"
+              border="rgba(255,255,255,0.12)"
+            >
+              HF too low — capped
+            </Pill>
+          )}
+          {!log.swapSucceeded && wethOut > 0n && (
+            <Pill
+              color="#ff6b35"
+              bg="rgba(255,107,53,0.06)"
+              border="rgba(255,107,53,0.22)"
+            >
+              Swap Skipped
+            </Pill>
+          )}
         </div>
         <span
-          className="sv-num text-xs"
-          style={{ color: 'var(--sv-dim)', fontSize: '0.65rem' }}
+          style={{ fontFamily: FONT_BODY, fontSize: '0.78rem', color: 'rgba(255,255,255,0.25)' }}
           title={formatTimestamp(log.timestamp)}
         >
           {formatRelativeTime(log.timestamp)}
         </span>
       </div>
 
-      {/* Metrics grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div>
-          <div className="sv-label" style={{ fontSize: '0.55rem' }}>HF CHANGE</div>
-          <HFDelta before={log.healthFactorBefore} after={log.healthFactorAfter} />
-        </div>
+      {/* Divider */}
+      <div style={{ height: 1, background: 'rgba(255,255,255,0.05)' }} />
 
-        <div>
-          <div className="sv-label" style={{ fontSize: '0.55rem' }}>WITHDRAWN</div>
-          <div className="sv-num text-xs" style={{ color: 'var(--sv-text)' }}>
-            {wethOut > BigInt(0) ? `${Number(ethers.formatEther(wethOut)).toFixed(4)} WETH` : '—'}
-          </div>
-        </div>
-
-        <div>
-          <div className="sv-label" style={{ fontSize: '0.55rem' }}>SWAP RECEIVED</div>
-          <div className="sv-num text-xs" style={{ color: log.swapSucceeded ? '#00ff88' : 'var(--sv-dim)' }}>
-            {usdcIn > BigInt(0)
-              ? `${Number(ethers.formatUnits(usdcIn, 6)).toFixed(2)} USDC`
-              : log.swapSucceeded ? '—' : 'skipped'}
-          </div>
-        </div>
-
-        <div>
-          <div className="sv-label" style={{ fontSize: '0.55rem' }}>DEBT REPAID</div>
-          <div className="sv-num text-xs" style={{ color: repaid > BigInt(0) ? '#00ff88' : 'var(--sv-dim)' }}>
-            {repaid > BigInt(0) ? `${Number(ethers.formatUnits(repaid, 6)).toFixed(2)} USDC` : '—'}
-          </div>
-        </div>
+      {/* Metrics: 4 columns */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 20 }}>
+        <HFArrow before={log.healthFactorBefore} after={log.healthFactorAfter} />
+        <Metric
+          title="WETH Withdrawn"
+          value={wethOut > 0n ? `${fmt18(wethOut)} WETH` : '—'}
+          color={wethOut > 0n ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.2)'}
+        />
+        <Metric
+          title="USDC Received"
+          value={usdcIn > 0n ? `${fmt6(usdcIn)} USDC` : '—'}
+          color={usdcIn > 0n ? '#00FF85' : 'rgba(255,255,255,0.2)'}
+        />
+        <Metric
+          title="Debt Repaid"
+          value={repaid > 0n ? `${fmt6(repaid)} USDC` : '—'}
+          color={repaid > 0n ? '#00FF85' : 'rgba(255,255,255,0.2)'}
+        />
       </div>
     </div>
   )
@@ -130,48 +222,94 @@ function LogRow({ log, isFirst }: { log: VaultLog; isFirst: boolean }) {
 
 function ChainSection({ chain }: { chain: ChainLogs }) {
   return (
-    <div className="flex flex-col gap-3">
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+
       {/* Chain header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div
-            className="w-2.5 h-2.5 rounded-full"
-            style={{ background: chain.color, boxShadow: `0 0 6px ${chain.color}` }}
-          />
-          <span className="sv-display text-sm font-semibold" style={{ color: 'var(--sv-text)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{
+            width:       8,
+            height:      8,
+            borderRadius: '50%',
+            background:  chain.color,
+            boxShadow:   `0 0 8px ${chain.color}`,
+            flexShrink:  0,
+          }} />
+          <span style={{
+            fontFamily:    FONT_BODY,
+            fontSize:      '0.9rem',
+            fontWeight:    700,
+            color:         '#fff',
+            letterSpacing: '-0.01em',
+          }}>
             {chain.label}
           </span>
-          <span
-            className="sv-num px-2 py-0.5 rounded text-xs"
-            style={{ color: 'var(--sv-blue)', background: 'rgba(0,212,255,0.1)', fontSize: '0.6rem' }}
-          >
-            {chain.logs.length} EXECUTIONS
+          <span style={{
+            fontFamily:    FONT_BODY,
+            fontSize:      '0.68rem',
+            fontWeight:    600,
+            padding:       '3px 10px',
+            borderRadius:  9999,
+            background:    'rgba(255,255,255,0.04)',
+            border:        '1px solid rgba(255,255,255,0.08)',
+            color:         'rgba(255,255,255,0.38)',
+            letterSpacing: '0.05em',
+            textTransform: 'uppercase',
+          }}>
+            {chain.logs.length} {chain.logs.length === 1 ? 'Execution' : 'Executions'}
           </span>
         </div>
         <a
           href={`${chain.explorer}/address/${chain.vault}`}
-          target="_blank" rel="noopener noreferrer"
-          className="sv-num hover:text-sv-blue transition-colors"
-          style={{ color: 'var(--sv-dim)', fontSize: '0.6rem' }}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            fontFamily:     FONT_MONO,
+            fontSize:       '0.7rem',
+            color:          'rgba(255,255,255,0.22)',
+            textDecoration: 'none',
+            transition:     'color 0.15s',
+          }}
+          onMouseEnter={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.6)')}
+          onMouseLeave={e => (e.currentTarget.style.color = 'rgba(255,255,255,0.22)')}
         >
           {chain.vault.slice(0, 6)}…{chain.vault.slice(-4)} ↗
         </a>
       </div>
 
+      {/* Rows or empty state */}
       {chain.logs.length === 0 ? (
-        <div
-          className="rounded-lg p-4 text-center"
-          style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--sv-border)' }}
-        >
-          <div className="sv-label" style={{ fontSize: '0.65rem' }}>NO VAULT EXECUTIONS YET</div>
-          <div className="text-xs mt-1" style={{ color: 'var(--sv-dim)' }}>
-            Trigger a risk event then run a CRE simulation to see execution logs here
+        <div style={{
+          background:   'rgba(255,255,255,0.02)',
+          border:       '1px solid rgba(255,255,255,0.06)',
+          borderRadius: 16,
+          padding:      '32px 24px',
+          textAlign:    'center',
+        }}>
+          <div style={{
+            fontFamily:    FONT_BODY,
+            fontSize:      '0.82rem',
+            fontWeight:    600,
+            color:         'rgba(255,255,255,0.22)',
+            letterSpacing: '0.06em',
+            marginBottom:  8,
+          }}>
+            No executions yet
+          </div>
+          <div style={{
+            fontFamily: FONT_BODY,
+            fontSize:   '0.8rem',
+            fontWeight: 300,
+            color:      'rgba(255,255,255,0.15)',
+            lineHeight: 1.6,
+          }}>
+            Trigger a risk event then run a CRE simulation to see logs here.
           </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-2">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
           {chain.logs.map((log, i) => (
-            <LogRow key={log.id} log={log} isFirst={i === 0} />
+            <LogRow key={log.id} log={log} isLatest={i === 0} />
           ))}
         </div>
       )}
@@ -179,26 +317,41 @@ function ChainSection({ chain }: { chain: ChainLogs }) {
   )
 }
 
+// ── Main export ───────────────────────────────────────────────────────────────
+
 export default function VaultActionLog({ data, loading }: VaultActionLogProps) {
   return (
-    <div className="sv-card p-5 flex flex-col gap-5">
-      <div className="flex items-center justify-between">
-        <span className="sv-label">VAULT EXECUTION HISTORY</span>
-        <span className="sv-label" style={{ color: 'var(--sv-dim)', fontSize: '0.6rem' }}>
-          Aave.withdraw → MockDEX.swap → Aave.repay
-        </span>
-      </div>
+    <div style={{
+      background:   'rgba(255,255,255,0.025)',
+      border:       '1px solid rgba(255,255,255,0.08)',
+      borderRadius: 20,
+      padding:      '26px',
+      position:     'relative',
+      overflow:     'hidden',
+    }}>
 
-      <div className="sv-divider" />
+      {/* Green shimmer on top edge */}
+      <div style={{
+        position:      'absolute',
+        top: 0, left: 0, right: 0,
+        height:        1,
+        background:    'linear-gradient(90deg, transparent, rgba(0,255,133,0.35), transparent)',
+        pointerEvents: 'none',
+      }} />
 
       {loading ? (
-        <div className="flex flex-col gap-4 animate-pulse">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           {[0, 1].map(i => (
-            <div key={i} className="h-28 rounded-lg" style={{ background: 'var(--sv-border)' }} />
+            <div key={i} style={{
+              height:       110,
+              borderRadius: 16,
+              background:   'rgba(255,255,255,0.03)',
+              border:       '1px solid rgba(255,255,255,0.06)',
+            }} />
           ))}
         </div>
       ) : (
-        <div className="flex flex-col gap-6">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
           {data.map(chain => (
             <ChainSection key={chain.chain} chain={chain} />
           ))}
