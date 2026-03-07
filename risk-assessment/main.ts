@@ -337,7 +337,7 @@ function calculateMultiChainRisk(
 
   sentimentScore = Math.max(0, Math.min(100, sentimentScore))
 
-  // Use same thresholds as Fear & Greed (low score = fear = higher risk)
+  // Use thresholds to keep it between 0 and 20 (low score = fear = higher risk)
   if (sentimentScore <= 10) score += 20
   else if (sentimentScore <= 25) score += 15
   else if (sentimentScore <= 40) score += 8

@@ -27,7 +27,7 @@
   ],
   "registry": {
     "chainSelectorName": "ethereum-testnet-sepolia",
-    "address": "0xed1bC5A7c14fFD74C8b71F0d6a4C13430F34F2de",
+    "address": "0xb246C21e878A1276B21761F9d946eC91Fb1Da73e",
     "isTestnet": true,
     "gasLimit": "500000"
   }
