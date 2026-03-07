@@ -1,6 +1,6 @@
 # The Risk Engine
 
-The Risk Engine is the core intelligence of SentinelVault. It is a strictly deterministic algorithm that evaluates your cross-chain Aave positions against real-time market sentiment to produce a **Risk Score between 0 and 100**.
+The Risk Engine is the core intelligence of SentinelVault. It is a strictly deterministic algorithm that evaluates your multi-chain Aave positions against real-time market sentiment to produce a **Risk Score between 0 and 100**.
 
 Unlike opaque machine learning models, SentinelVault's scoring system is 100% transparent, mathematically reproducible, and explicitly defined in code.
 
@@ -22,7 +22,7 @@ We evaluate the worst Health Factor (HF) across all monitored chains.
 *   **HF ≥ 2.00:** `+2 points` (Safe)
 
 ### 2. LTV (Loan-to-Value) Utilization (0 to 25 Points)
-*How heavily leveraged is the entire cross-chain portfolio?*
+*How heavily leveraged is the entire multi-chain portfolio?*
 
 We sum the total collateral and total debt across all chains to find the global LTV.
 *   **Global LTV > 85%:** `+25 points`

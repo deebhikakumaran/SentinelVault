@@ -1,7 +1,7 @@
 <div align="center">
   <h1 align="center">🛡️ SentinelVault</h1>
   <p align="center">
-    <b>Autonomous cross-chain DeFi position protection powered by Chainlink CRE</b>
+    <b>Autonomous multi-chain DeFi position protection powered by Chainlink CRE</b>
   </p>
 
   <p align="center">
@@ -23,7 +23,7 @@
 
 ---
 ### 🌟 Vision
-To create a **set-and-forget safety net** for DeFi users. We believe that managing cross-chain wealth shouldn't require being glued to a screen 24/7. SentinelVault ensures your assets are protected from market crashes and liquidations automatically, providing peace of mind through decentralized, deterministic automation.
+To create a **set-and-forget safety net** for DeFi users. We believe that managing multi-chain wealth shouldn't require being glued to a screen 24/7. SentinelVault ensures your assets are protected from market crashes and liquidations automatically, providing peace of mind through decentralized, deterministic automation.
 
 **The Perspective:**
 *   **Without Sentinel:** You wake up to a 20% market crash, find your position liquidated, and lose your collateral to penalties.
@@ -86,7 +86,7 @@ graph TD
 ## Track Entries
 
 ### DeFi Track
-- Monitors live Aave V3 positions cross-chain (Sepolia + Base Sepolia)
+- Monitors live Aave V3 positions multiple chains (Sepolia + Base Sepolia)
 - Atomic execution: withdraw → swap → repay in a single transaction
 - `_safeWithdrawAmount()` caps withdrawal to keep HF ≥ 1.2 at all times
 - Four protection levels: HOLD / REBALANCE (25%) / DELEVERAGE (50%) / EMERGENCY_EXIT
