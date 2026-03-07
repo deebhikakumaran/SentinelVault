@@ -111,10 +111,10 @@ graph TD
 
 | Contract | Chain | Address |
 |----------|-------|---------|
-| SentinelVault | Sepolia (11155111) | `0x59d1102E37ECC1ff5cEde1D67D9C0C59f05f0A19` |
-| SentinelVault | Base Sepolia (84532) | `0x1980F9a92e97C63468f1cDA533900d0D50a33058` |
-| SimpleMockDEX | Sepolia | `0xb8EfB0040C6Cb17116bBc0cB630FDcAf54A87625` |
-| SimpleMockDEX | Base Sepolia | `0xe27F698012E5eBcdc4E8f9d4AcAcdC6f8153C699` |
+| SentinelVault | Sepolia (11155111) | `0xbc1B77fcAf2A23D63a63b1CB4529629b0A9f4572` |
+| SentinelVault | Base Sepolia (84532) | `0x59d1102E37ECC1ff5cEde1D67D9C0C59f05f0A19` |
+| SimpleMockDEX | Sepolia | `0xCc449B9F07CD57967A267056A21CF85f8A97b1bF` |
+| SimpleMockDEX | Base Sepolia | `0xb8EfB0040C6Cb17116bBc0cB630FDcAf54A87625` |
 | SentinelRegistry | Sepolia | `0xb246C21e878A1276B21761F9d946eC91Fb1Da73e` |
 
 **Deployer:** `0x5042E61146F26a253697Ebf1C44F64E75EfccC9B`

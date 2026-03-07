@@ -142,9 +142,13 @@ async function ensureVaultWeth(
   // but does NOT mint ERC20 tokens. We verify the balance increased after the call.
 
   // Base Sepolia's WETH is a bridged token: deposit() accepts ETH but does NOT mint ERC20.
-  // Skip deposit() entirely and prompt the user to bridge ETH or use the Aave faucet.
+  // Skip deposit() entirely. If the vault already holds some WETH, use it rather than throwing.
   const BRIDGED_WETH = '0x4200000000000000000000000000000000000006';
   if (cfg.weth.toLowerCase() === BRIDGED_WETH.toLowerCase()) {
+    if (vaultBal > 0n) {
+      console.log(`     vault holds ${ethers.formatEther(vaultBal)} WETH (bridged token, using existing balance)`);
+      return vaultBal;
+    }
     throw new Error(
       `${cfg.label}: WETH (${cfg.weth}) is a bridged token — deposit() does not mint ERC20.\n` +
       `  Bridge more ETH to Base Sepolia, or mint testnet WETH from the Aave faucet:\n` +

@@ -9,9 +9,9 @@
       "isTestnet": true,
       "chainLabel": "sepolia",
       "aavePoolAddress": "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951",
-      "vaultAddress": "0x59d1102E37ECC1ff5cEde1D67D9C0C59f05f0A19",
-      "mockDexAddress": "0xb8EfB0040C6Cb17116bBc0cB630FDcAf54A87625",
-      "monitoredWallet": "0x59d1102E37ECC1ff5cEde1D67D9C0C59f05f0A19",
+      "vaultAddress": "0xbc1B77fcAf2A23D63a63b1CB4529629b0A9f4572",
+      "mockDexAddress": "0xCc449B9F07CD57967A267056A21CF85f8A97b1bF",
+      "monitoredWallet": "0xbc1B77fcAf2A23D63a63b1CB4529629b0A9f4572",
       "gasLimit": "500000"
     },
     {
@@ -19,9 +19,9 @@
       "isTestnet": true,
       "chainLabel": "base-sepolia",
       "aavePoolAddress": "0x07eA79F68B2B3df564D0A34F8e19D9B1e339814b",
-      "vaultAddress": "0x1980F9a92e97C63468f1cDA533900d0D50a33058",
-      "mockDexAddress": "0xe27F698012E5eBcdc4E8f9d4AcAcdC6f8153C699",
-      "monitoredWallet": "0x1980F9a92e97C63468f1cDA533900d0D50a33058",
+      "vaultAddress": "0x59d1102E37ECC1ff5cEde1D67D9C0C59f05f0A19",
+      "mockDexAddress": "0xb8EfB0040C6Cb17116bBc0cB630FDcAf54A87625",
+      "monitoredWallet": "0x59d1102E37ECC1ff5cEde1D67D9C0C59f05f0A19",
       "gasLimit": "500000"
     }
   ],
