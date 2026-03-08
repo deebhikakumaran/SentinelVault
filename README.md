@@ -22,10 +22,15 @@
 </div>
 
 ---
-## 🌟 **Live Demo**
+## 🔗 **Links**
 
-- 🔗 **SentinelVault:** [https://vaultwatcher.netlify.app/](https://vaultwatcher.netlify.app/)
-- 🔗 **Demo video:** [https://youtu.be/Xxmq_S7b2Jo](https://youtu.be/Xxmq_S7b2Jo)
+- **Live Application:** [https://vaultwatcher.netlify.app/](https://vaultwatcher.netlify.app/)
+- **Demo video:** [https://youtu.be/Xxmq_S7b2Jo](https://youtu.be/Xxmq_S7b2Jo)
+- **CRE Workflow:** [CRE Workflow: https://github.com/deebhikakumaran/SentinelVault/blob/main/risk-assessment/main.ts](CRE Workflow: https://github.com/deebhikakumaran/SentinelVault/blob/main/risk-assessment/main.ts)
+- **Registry Smart Contract:** [https://github.com/deebhikakumaran/SentinelVault/blob/main/contracts/src/SentinelRegistry.sol](https://github.com/deebhikakumaran/SentinelVault/blob/main/contracts/src/SentinelRegistry.sol)
+- **Vault Smart Contract: ** [https://github.com/deebhikakumaran/SentinelVault/blob/main/contracts/src/SentinelVault.sol](https://github.com/deebhikakumaran/SentinelVault/blob/main/contracts/src/SentinelVault.sol)
+
+
 --- 
 ### 🌟 Vision
 To create a **set-and-forget safety net** for DeFi users. We believe that managing multi-chain wealth shouldn't require being glued to a screen 24/7. SentinelVault ensures your assets are protected from market crashes and liquidations automatically, providing peace of mind through decentralized, deterministic automation.
