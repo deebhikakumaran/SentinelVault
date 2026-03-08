@@ -22,6 +22,11 @@
 </div>
 
 ---
+## 🌟 **Live Demo**
+
+- 🔗 **SentinelVault:** [https://vaultwatcher.netlify.app/](https://vaultwatcher.netlify.app/)
+- 🔗 **Demo video:** [https://youtu.be/Xxmq_S7b2Jo](https://youtu.be/Xxmq_S7b2Jo)
+--- 
 ### 🌟 Vision
 To create a **set-and-forget safety net** for DeFi users. We believe that managing multi-chain wealth shouldn't require being glued to a screen 24/7. SentinelVault ensures your assets are protected from market crashes and liquidations automatically, providing peace of mind through decentralized, deterministic automation.
 
