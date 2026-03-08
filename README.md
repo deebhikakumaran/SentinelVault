@@ -26,7 +26,7 @@
 
 - **Live Application:** [https://vaultwatcher.netlify.app/](https://vaultwatcher.netlify.app/)
 - **Demo video:** [https://youtu.be/Xxmq_S7b2Jo](https://youtu.be/Xxmq_S7b2Jo)
-- **CRE Workflow:** [CRE Workflow: https://github.com/deebhikakumaran/SentinelVault/blob/main/risk-assessment/main.ts](CRE Workflow: https://github.com/deebhikakumaran/SentinelVault/blob/main/risk-assessment/main.ts)
+- **CRE Workflow:** [https://github.com/deebhikakumaran/SentinelVault/blob/main/risk-assessment/main.ts](https://github.com/deebhikakumaran/SentinelVault/blob/main/risk-assessment/main.ts)
 - **Registry Smart Contract:** [https://github.com/deebhikakumaran/SentinelVault/blob/main/contracts/src/SentinelRegistry.sol](https://github.com/deebhikakumaran/SentinelVault/blob/main/contracts/src/SentinelRegistry.sol)
 - **Vault Smart Contract: ** [https://github.com/deebhikakumaran/SentinelVault/blob/main/contracts/src/SentinelVault.sol](https://github.com/deebhikakumaran/SentinelVault/blob/main/contracts/src/SentinelVault.sol)
 
